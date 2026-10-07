@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1980" viewBox="0 0 1400 1980" role="img" aria-labelledby="title description">
+  <title id="title">Omzo Air production architecture and persistent human-handoff flow</title>
+  <desc id="description">A flow diagram showing authenticated patient messages entering a state-aware safety router. Active human-handled conversations bypass retrieval and the model, append to the same care-team case, and use an idempotent transactional outbox with durable queue retries and alerts.</desc>
+
+  <defs>
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2563eb"/>
+    </marker>
+    <marker id="arrow-amber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#b45309"/>
+    </marker>
+    <marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#b91c1c"/>
+    </marker>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#0f172a" flood-opacity="0.10"/>
+    </filter>
+    <style>
+      .canvas { fill: #ffffff; }
+      .title { font: 700 38px Inter, "Segoe UI", Arial, sans-serif; fill: #0f172a; }
+      .subtitle { font: 400 19px Inter, "Segoe UI", Arial, sans-serif; fill: #475569; }
+      .section-label { font: 700 18px Inter, "Segoe UI", Arial, sans-serif; letter-spacing: 1.5px; }
+      .box-title { font: 700 20px Inter, "Segoe UI", Arial, sans-serif; fill: #0f172a; }
+      .box-copy { font: 400 16px Inter, "Segoe UI", Arial, sans-serif; fill: #334155; }
+      .small { font: 600 14px Inter, "Segoe UI", Arial, sans-serif; fill: #475569; }
+      .edge-label { font: 700 15px Inter, "Segoe UI", Arial, sans-serif; }
+      .footer-copy { font: 600 14px Inter, "Segoe UI", Arial, sans-serif; fill: #e2e8f0; }
+      .footer-muted { font: 500 14px Inter, "Segoe UI", Arial, sans-serif; fill: #94a3b8; }
+      .blue-line { fill: none; stroke: #2563eb; stroke-width: 4; marker-end: url(#arrow-blue); }
+      .amber-line { fill: none; stroke: #b45309; stroke-width: 4; marker-end: url(#arrow-amber); }
+      .red-line { fill: none; stroke: #b91c1c; stroke-width: 4; marker-end: url(#arrow-red); }
+      .return-line { fill: none; stroke: #b45309; stroke-width: 4; stroke-dasharray: 10 8; marker-end: url(#arrow-amber); }
+      .box { stroke-width: 2.5; rx: 18; filter: url(#shadow); }
+      .blue-box { fill: #ffffff; stroke: #60a5fa; }
+      .amber-box { fill: #fffdf7; stroke: #f59e0b; }
+      .red-box { fill: #fff7f7; stroke: #ef4444; }
+      .green-box { fill: #f5fff8; stroke: #22c55e; }
+      .slate-box { fill: #ffffff; stroke: #94a3b8; }
+    </style>
+  </defs>
+
+  <rect class="canvas" width="1400" height="1980"/>
+
+  <text class="title" x="70" y="70">Omzo Air production architecture</text>
+  <text class="subtitle" x="70" y="108">Context-aware safety routing with a durable, sticky human handoff</text>
+
+  <rect x="40" y="145" width="1320" height="400" rx="26" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+  <text class="section-label" x="70" y="184" fill="#475569">INGRESS AND CONVERSATION STATE</text>
+
+  <rect class="box slate-box" x="70" y="225" width="245" height="112"/>
+  <text class="box-title" x="192" y="265" text-anchor="middle">Patient app</text>
+  <text class="box-copy" x="192" y="298" text-anchor="middle">Authenticated request</text>
+
+  <rect class="box blue-box" x="395" y="225" width="245" height="112"/>
+  <text class="box-title" x="517" y="265" text-anchor="middle">API Gateway + WAF</text>
+  <text class="box-copy" x="517" y="298" text-anchor="middle">TLS, auth, rate limits</text>
+
+  <rect class="box blue-box" x="720" y="225" width="245" height="112"/>
+  <text class="box-title" x="842" y="265" text-anchor="middle">Python API</text>
+  <text class="box-copy" x="842" y="298" text-anchor="middle">ECS Fargate, private subnet</text>
+
+  <rect class="box slate-box" x="1045" y="210" width="275" height="142"/>
+  <text class="box-title" x="1182" y="250" text-anchor="middle">PostgreSQL</text>
+  <text class="box-copy" x="1182" y="282" text-anchor="middle">Conversation + explicit</text>
+  <text class="box-copy" x="1182" y="307" text-anchor="middle">handoff state + recent</text>
+  <text class="box-copy" x="1182" y="332" text-anchor="middle">safety context</text>
+
+  <path class="blue-line" d="M 315 281 L 395 281"/>
+  <path class="blue-line" d="M 640 281 L 720 281"/>
+  <path class="blue-line" d="M 965 281 L 1045 281"/>
+
+  <polygon points="700,395 845,460 700,525 555,460" fill="#eef6ff" stroke="#2563eb" stroke-width="3" filter="url(#shadow)"/>
+  <text class="box-title" x="700" y="453" text-anchor="middle">human_handling</text>
+  <text class="box-title" x="700" y="480" text-anchor="middle">active?</text>
+  <path class="blue-line" d="M 1182 352 L 1182 380 L 845 445"/>
+
+  <rect x="40" y="575" width="710" height="1110" rx="26" fill="#f5f9ff" stroke="#bfdbfe" stroke-width="2"/>
+  <text class="section-label" x="70" y="615" fill="#1d4ed8">AUTOMATED PATH - ONLY WHEN HANDOFF IS INACTIVE</text>
+
+  <rect x="790" y="575" width="570" height="1110" rx="26" fill="#fffbeb" stroke="#fde68a" stroke-width="2"/>
+  <text class="section-label" x="820" y="615" fill="#92400e">DURABLE HUMAN-HANDLING PATH</text>
+
+  <rect class="box blue-box" x="100" y="665" width="550" height="135"/>
+  <text class="box-title" x="375" y="705" text-anchor="middle">Safety router</text>
+  <text class="box-copy" x="375" y="738" text-anchor="middle">Current message + bounded recent safety context</text>
+  <text class="box-copy" x="375" y="767" text-anchor="middle">Safety decisions precede every task or model route</text>
+
+  <rect class="box amber-box" x="835" y="665" width="480" height="135"/>
+  <text class="box-title" x="1075" y="705" text-anchor="middle">Append while human_handling is active</text>
+  <text class="box-copy" x="1075" y="738" text-anchor="middle">Persist the later patient message</text>
+  <text class="box-copy" x="1075" y="767" text-anchor="middle">No RAG or model call is permitted</text>
+
+  <path class="blue-line" d="M 620 500 L 375 665"/>
+  <text class="edge-label" x="480" y="565" fill="#1d4ed8">NO</text>
+  <path class="amber-line" d="M 780 500 L 1075 665"/>
+  <text class="edge-label" x="916" y="565" fill="#92400e">YES</text>
+
+  <rect class="box slate-box" x="70" y="900" width="295" height="140"/>
+  <text class="box-title" x="217" y="940" text-anchor="middle">Deterministic routes</text>
+  <text class="box-copy" x="217" y="973" text-anchor="middle">Code, approved FAQ,</text>
+  <text class="box-copy" x="217" y="1000" text-anchor="middle">or reviewed refusal</text>
+
+  <rect class="box blue-box" x="420" y="900" width="295" height="140"/>
+  <text class="box-title" x="567" y="940" text-anchor="middle">Approved RAG</text>
+  <text class="box-copy" x="567" y="973" text-anchor="middle">Versioned S3 content +</text>
+  <text class="box-copy" x="567" y="1000" text-anchor="middle">PostgreSQL / pgvector</text>
+
+  <path class="blue-line" d="M 250 800 L 217 900"/>
+  <text class="edge-label" x="100" y="855" fill="#1d4ed8">CODE / FAQ / REFUSE</text>
+  <path class="blue-line" d="M 500 800 L 567 900"/>
+  <text class="edge-label" x="500" y="855" fill="#1d4ed8">ANSWER</text>
+
+  <rect class="box blue-box" x="420" y="1110" width="295" height="112"/>
+  <text class="box-title" x="567" y="1153" text-anchor="middle">Pinned managed model</text>
+  <text class="box-copy" x="567" y="1186" text-anchor="middle">Minimum necessary passages</text>
+  <path class="blue-line" d="M 567 1040 L 567 1110"/>
+
+  <rect class="box green-box" x="420" y="1290" width="295" height="135"/>
+  <text class="box-title" x="567" y="1330" text-anchor="middle">Buffered release gate</text>
+  <text class="box-copy" x="567" y="1363" text-anchor="middle">Grounding, prohibited advice,</text>
+  <text class="box-copy" x="567" y="1390" text-anchor="middle">and new-risk checks</text>
+  <path class="blue-line" d="M 567 1222 L 567 1290"/>
+
+  <rect class="box red-box" x="835" y="875" width="480" height="160"/>
+  <text class="box-title" x="1075" y="915" text-anchor="middle">Enter human_handling atomically</text>
+  <text class="box-copy" x="1075" y="950" text-anchor="middle">Stable idempotency key prevents duplicate cases</text>
+  <text class="box-copy" x="1075" y="980" text-anchor="middle">State change and outbox event commit together</text>
+  <text class="small" x="1075" y="1010" text-anchor="middle">Urgent / clinician-only / uncertain / new risk</text>
+
+  <path class="red-line" d="M 650 735 L 780 735 L 780 955 L 835 955"/>
+  <text class="edge-label" x="670" y="718" fill="#b91c1c">ESCALATE</text>
+  <path class="red-line" d="M 715 1358 L 770 1358 L 770 1010 L 835 1010"/>
+  <text class="edge-label" x="737" y="1338" fill="#b91c1c">FAIL / NEW RISK</text>
+
+  <rect class="box amber-box" x="835" y="1110" width="480" height="170"/>
+  <text class="box-title" x="1075" y="1150" text-anchor="middle">Transactional outbox -&gt; SQS</text>
+  <text class="box-copy" x="1075" y="1185" text-anchor="middle">Durable retries, dead-letter handling, and alerts</text>
+  <text class="box-copy" x="1075" y="1215" text-anchor="middle">A queue-write failure stays pending and durable</text>
+  <text class="box-copy" x="1075" y="1245" text-anchor="middle">Never report delivery before acknowledgment</text>
+  <path class="amber-line" d="M 1260 800 L 1330 800 L 1330 1070 L 1250 1110"/>
+  <path class="amber-line" d="M 1075 1035 L 1075 1110"/>
+
+  <rect class="box amber-box" x="835" y="1350" width="480" height="125"/>
+  <text class="box-title" x="1075" y="1390" text-anchor="middle">Same care-team case</text>
+  <text class="box-copy" x="1075" y="1423" text-anchor="middle">Create once or append; preserve ordering</text>
+  <text class="box-copy" x="1075" y="1450" text-anchor="middle">and auditable delivery state</text>
+  <path class="amber-line" d="M 1075 1280 L 1075 1350"/>
+
+  <rect class="box amber-box" x="835" y="1535" width="230" height="105"/>
+  <text class="box-title" x="950" y="1577" text-anchor="middle">Human care team</text>
+  <text class="box-copy" x="950" y="1610" text-anchor="middle">Acknowledge and handle</text>
+  <path class="amber-line" d="M 1075 1475 L 980 1535"/>
+
+  <rect class="box amber-box" x="1090" y="1535" width="225" height="105"/>
+  <text class="box-title" x="1202" y="1577" text-anchor="middle">Close / release</text>
+  <text class="box-copy" x="1202" y="1610" text-anchor="middle">Authenticated action only</text>
+  <path class="amber-line" d="M 1065 1587 L 1090 1587"/>
+
+  <rect class="box slate-box" x="80" y="1535" width="635" height="105"/>
+  <text class="box-title" x="397" y="1577" text-anchor="middle">Patient response</text>
+  <text class="box-copy" x="397" y="1610" text-anchor="middle">Approved output or truthful recorded / pending / acknowledged handoff status</text>
+  <path class="blue-line" d="M 217 1040 L 217 1535"/>
+  <path class="blue-line" d="M 567 1425 L 500 1535"/>
+  <path class="amber-line" d="M 835 1587 L 715 1587"/>
+
+  <path class="return-line" d="M 1315 1587 L 1340 1587 L 1340 185 L 1225 185 L 1225 210"/>
+  <text class="small" x="1050" y="1665" fill="#92400e">Only close / release re-enables automation</text>
+
+  <rect x="40" y="1815" width="1320" height="110" rx="20" fill="#0f172a"/>
+  <circle cx="85" cy="1853" r="9" fill="#2563eb"/>
+  <text class="footer-copy" x="105" y="1858">Automated, state-gated flow</text>
+  <circle cx="390" cy="1853" r="9" fill="#b45309"/>
+  <text class="footer-copy" x="410" y="1858">Durable human flow</text>
+  <circle cx="685" cy="1853" r="9" fill="#b91c1c"/>
+  <text class="footer-copy" x="705" y="1858">Safety transition</text>
+  <text class="footer-muted" x="85" y="1895">All data shown is architectural and synthetic. Privacy, security, contractual, and operational controls remain required.</text>
+</svg>
